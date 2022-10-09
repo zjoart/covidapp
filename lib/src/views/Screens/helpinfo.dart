@@ -14,8 +14,8 @@ class SyHelp extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.blue[900],
-            Colors.blue[900],
+            Colors.blue.shade900,
+            Colors.blue.shade900,
           ],
         ),
         image: DecorationImage(
@@ -77,7 +77,7 @@ class SyHelp extends StatelessWidget {
                   try {
                     launch('https://www.ncdc.gov.ng');
                   } catch (e) {
-                    print(e);
+                    //
                   }
                 },
                 child: Padding(

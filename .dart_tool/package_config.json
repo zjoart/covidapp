@@ -377,10 +377,10 @@
       "name": "covidapp",
       "rootUri": "../",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.17"
     }
   ],
-  "generated": "2022-09-29T13:51:31.846506Z",
+  "generated": "2022-10-09T19:54:47.493227Z",
   "generator": "pub",
   "generatorVersion": "2.18.0"
 }

@@ -1,5 +1,10 @@
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:covidapp/src/viewmodels/home_vm.dart';
+import 'package:covidapp/src/views/Screens/faqinfo.dart';
+import 'package:covidapp/src/views/Screens/mostaffected.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import './Screens/search.dart';
 import './Screens/globalstat.dart';
 import 'package:share/share.dart';
@@ -7,74 +12,33 @@ import 'package:pie_chart/pie_chart.dart';
 import './Screens/helpinfo.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class LandingPage extends StatefulWidget {
-  final String payload;
+class LandingPage extends ConsumerWidget {
   const LandingPage({
-    @required this.payload,
-    Key key,
+    Key? key,
   }) : super(key: key);
   @override
-  _LandingPageState createState() => _LandingPageState();
-}
-
-class _LandingPageState extends State<LandingPage> {
-  Map worldData;
-  Future<dynamic> getWorldwideData() async {
-    try {
-      http.Response response = await http.get('$apiUrl/all');
-      setState(() {
-        worldData = jsonDecode(response.body);
-      });
-    } catch (e) {
-      print('cant fetch data');
-    }
-  }
-
-  List countrydata;
-  Future<dynamic> mostAffectedCountries() async {
-    try {
-      http.Response response =
-          await http.get('$apiUrl/countries?yesterday=false&sort=deaths');
-      setState(() {
-        countrydata = jsonDecode(response.body);
-      });
-    } catch (e) {
-      print('cant fetch data');
-    }
-  }
-
-  Future<dynamic> allData() async {
-    getWorldwideData();
-    mostAffectedCountries();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    allData();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final _viewModel = ref.watch(homeViewModelProvider);
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
           IconButton(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               color: Colors.white,
               disabledColor: Colors.white,
               onPressed: () {
-                countrydata == null
-                    ? CircularProgressIndicator(
+                _viewModel.countryDataModel == null
+                    ? const CircularProgressIndicator(
                         semanticsLabel: 'Please wait',
                       )
                     : showSearch(
                         context: context,
-                        delegate: Search(countrylist: countrydata),
+                        delegate:
+                            Search(countrylist: _viewModel.countryDataModel!),
                       );
               }),
         ],
-        title: Text(
+        title: const Text(
           'Covid-19 Updates',
           style: TextStyle(
               //fontSize: 25,
@@ -97,8 +61,8 @@ class _LandingPageState extends State<LandingPage> {
                   : Colors.blue[900],
               child: Row(
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 20.0),
                     child: Text(
                       'Settings',
                       style: TextStyle(
@@ -108,11 +72,11 @@ class _LandingPageState extends State<LandingPage> {
                           fontFamily: 'Poppins-Medium'),
                     ),
                   ),
-                  SizedBox(width: 143),
+                  const SizedBox(width: 143),
                   Padding(
                     padding: const EdgeInsets.only(left: 11.0),
                     child: IconButton(
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.settings,
                         color: Colors.white,
                       ),
@@ -124,33 +88,20 @@ class _LandingPageState extends State<LandingPage> {
             ),
             GestureDetector(
               onTap: () {
-                DynamicTheme.of(context).setBrightness(
-                    Theme.of(context).brightness == Brightness.light
-                        ? Brightness.dark
-                        : Brightness.light);
+                AdaptiveTheme.of(context).toggleThemeMode();
               },
-              child: Container(
-                child: ListTile(
-                  title: Text(
-                    'Theme',
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins-Medium'),
-                  ),
-                  trailing: IconButton(
-                    icon: Icon(
-                      Theme.of(context).brightness == Brightness.light
-                          ? Icons.lightbulb_outline
-                          : Icons.highlight,
-                    ),
-                    onPressed: () {
-                      DynamicTheme.of(context).setBrightness(
-                          Theme.of(context).brightness == Brightness.light
-                              ? Brightness.dark
-                              : Brightness.light);
-                    },
-                  ),
+              child: ListTile(
+                title: const Text(
+                  'Theme',
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins-Medium'),
+                ),
+                trailing: Icon(
+                  Theme.of(context).brightness == Brightness.light
+                      ? Icons.lightbulb_outline
+                      : Icons.highlight,
                 ),
               ),
             ),
@@ -159,22 +110,20 @@ class _LandingPageState extends State<LandingPage> {
                 try {
                   launch('https://forms.gle/Mz9An8WFjdLo3BrGA');
                 } catch (e) {
-                  print(e);
+                  //
                 }
               },
-              child: Container(
-                child: ListTile(
-                  title: Text(
-                    'Found bugs? Review this App',
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins-Medium'),
-                  ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.rate_review),
-                    onPressed: () {},
-                  ),
+              child: ListTile(
+                title: const Text(
+                  'Found bugs? Review this App',
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins-Medium'),
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.rate_review),
+                  onPressed: () {},
                 ),
               ),
             ),
@@ -185,22 +134,20 @@ class _LandingPageState extends State<LandingPage> {
                   Share.share(
                       'Check out my Covid19 update app \n https://www.jossaysblog.com.ng/2020/05/covid-19coronavirus-update-app.html');
                 },
-                child: Container(
-                  child: ListTile(
-                    title: Text(
-                      'Share this App',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Poppins-Medium'),
-                    ),
-                    trailing: IconButton(
-                      onPressed: () {
-                        Share.share(
-                            'Check out my Covid19 update app \n https://www.jossaysblog.com.ng/2020/05/covid-19coronavirus-update-app.html');
-                      },
-                      icon: Icon(Icons.share),
-                    ),
+                child: ListTile(
+                  title: const Text(
+                    'Share this App',
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins-Medium'),
+                  ),
+                  trailing: IconButton(
+                    onPressed: () {
+                      Share.share(
+                          'Check out my Covid19 update app \n https://www.jossaysblog.com.ng/2020/05/covid-19coronavirus-update-app.html');
+                    },
+                    icon: const Icon(Icons.share),
                   ),
                 ),
               ),
@@ -209,20 +156,21 @@ class _LandingPageState extends State<LandingPage> {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: allData,
+        onRefresh: ref.read(homeViewModelProvider.notifier).getALLData(),
         child: SingleChildScrollView(
           child: Column(children: <Widget>[
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Center(
               child: GestureDetector(
                 onTap: () {
-                  countrydata == null
-                      ? CircularProgressIndicator(
+                  _viewModel.countryDataModel == null
+                      ? const CircularProgressIndicator(
                           semanticsLabel: 'Please wait',
                         )
                       : showSearch(
                           context: context,
-                          delegate: Search(countrylist: countrydata),
+                          delegate:
+                              Search(countrylist: _viewModel.countryDataModel!),
                         );
                 },
                 child: Container(
@@ -237,8 +185,8 @@ class _LandingPageState extends State<LandingPage> {
                   child: Center(
                     child: Row(
                       children: <Widget>[
-                        SizedBox(width: 25),
-                        Text(
+                        const SizedBox(width: 25),
+                        const Text(
                           'Search for countries update',
                           style: TextStyle(
                               fontSize: 15,
@@ -247,18 +195,19 @@ class _LandingPageState extends State<LandingPage> {
                               fontFamily: 'Poppins-Regular'),
                         ),
                         IconButton(
-                            icon: Icon(Icons.search),
+                            icon: const Icon(Icons.search),
                             color: Colors.white,
                             disabledColor: Colors.white,
                             onPressed: () {
-                              countrydata == null
-                                  ? CircularProgressIndicator(
+                              _viewModel.countryDataModel == null
+                                  ? const CircularProgressIndicator(
                                       semanticsLabel: 'Please wait',
                                     )
                                   : showSearch(
                                       context: context,
-                                      delegate:
-                                          Search(countrylist: countrydata),
+                                      delegate: Search(
+                                          countrylist:
+                                              _viewModel.countryDataModel!),
                                     );
                             }),
                       ],
@@ -267,11 +216,11 @@ class _LandingPageState extends State<LandingPage> {
                 ),
               ),
             ),
-            SizedBox(height: 5.0),
-            AllYouKnow(),
-            SizedBox(height: 7.0),
+            const SizedBox(height: 5.0),
+            const AllYouKnow(),
+            const SizedBox(height: 7.0),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -279,13 +228,13 @@ class _LandingPageState extends State<LandingPage> {
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(right: 20.0),
-                        child: Container(
+                        child: SizedBox(
                           width: 300,
                           height: 30,
                           child: Center(
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
+                              children: const <Widget>[
                                 SizedBox(width: 10.0),
                                 Icon(Icons.flag),
                                 SizedBox(width: 10.0),
@@ -311,16 +260,16 @@ class _LandingPageState extends State<LandingPage> {
                 ],
               ),
             ),
-            countrydata == null
-                ? CircularProgressIndicator(
+            _viewModel.countryDataModel == null
+                ? const CircularProgressIndicator(
                     semanticsLabel: 'Please wait',
                   )
                 : MostAffected(
-                    countrydata: countrydata,
+                    countrydata: _viewModel.countryDataModel!,
                   ),
-            SizedBox(height: 5.0),
+            const SizedBox(height: 5.0),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -328,13 +277,13 @@ class _LandingPageState extends State<LandingPage> {
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(right: 20.0),
-                        child: Container(
+                        child: SizedBox(
                           width: 300,
                           height: 30,
                           child: Center(
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
+                              children: const [
                                 SizedBox(width: 10.0),
                                 Icon(Icons.score),
                                 SizedBox(width: 10.0),
@@ -360,22 +309,22 @@ class _LandingPageState extends State<LandingPage> {
                 ],
               ),
             ),
-            SizedBox(height: 2),
-            worldData == null
-                ? CircularProgressIndicator()
+            const SizedBox(height: 2),
+            _viewModel.worldDataModel == null
+                ? const CircularProgressIndicator()
                 : GlobalData(
-                    data: worldData,
+                    data: _viewModel.worldDataModel!,
                   ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(right: 30.0),
-              child: Container(
+              child: SizedBox(
                 width: 300,
                 height: 30,
                 child: Column(
                   children: <Widget>[
                     Row(
-                      children: <Widget>[
+                      children: const [
                         //SizedBox(width: 20),
                         Icon(Icons.pie_chart),
                         SizedBox(width: 10),
@@ -401,25 +350,25 @@ class _LandingPageState extends State<LandingPage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(10),
-              child: worldData == null
-                  ? CircularProgressIndicator(
+              padding: const EdgeInsets.all(10),
+              child: _viewModel.worldDataModel == null
+                  ? const CircularProgressIndicator(
                       semanticsLabel: 'Please wait',
                     )
                   : PieChart(dataMap: {
-                      'Confirmed': worldData['cases'].toDouble(),
-                      'Active': worldData['active'].toDouble(),
-                      'Recovered': worldData['recovered'].toDouble(),
-                      'Death': worldData['deaths'].toDouble(),
+                      'Confirmed': _viewModel.worldDataModel!.cases,
+                      'Active': _viewModel.worldDataModel!.active,
+                      'Recovered': _viewModel.worldDataModel!.recovered,
+                      'Death': _viewModel.worldDataModel!.deaths,
                     }, colorList: [
-                      Colors.yellow[800],
-                      Colors.blue[800],
-                      Colors.green[800],
-                      Colors.red[800],
+                      Colors.yellow.shade800,
+                      Colors.blue.shade800,
+                      Colors.green.shade800,
+                      Colors.red.shade800,
                     ]),
             ),
-            SyHelp(),
-            SizedBox(height: 5),
+            const SyHelp(),
+            const SizedBox(height: 5),
           ]),
         ),
       ),
@@ -433,7 +382,7 @@ class _LandingPageState extends State<LandingPage> {
             padding: const EdgeInsets.only(top: 7.0, left: 10.0),
             child: Text(
               'Last updated ${DateTime.now()}',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
                 fontFamily: 'Poppins-Regular',

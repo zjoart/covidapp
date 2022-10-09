@@ -2,8 +2,6 @@ import 'package:covidapp/src/http/custom_exception.dart';
 import 'package:covidapp/src/models/formatted_response.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:covidapp/src/http/network.dart' as _networkutils;
 import 'dart:developer' as _logger;
 
 abstract class ApiManager {
@@ -11,9 +9,8 @@ abstract class ApiManager {
 
   ///Leaving it open because it is an open source api
   final baseURL = 'https://corona.lmao.ninja/v2';
-  final Reader read;
 
-  ApiManager(this.read) {
+  ApiManager() {
     final options = BaseOptions(
       baseUrl: baseURL,
       receiveDataWhenStatusError: true,
@@ -121,15 +118,8 @@ abstract class ApiManager {
           : formEncoded
               ? 'application/x-www-form-urlencoded'
               : 'application/json',
-      // 'AppID': appID,
-      // 'AppKey': apiKey,
-      'Authorization': 'Mobile',
       'Accept': '*/*'
     };
-    // if (await read(secureStorageProvider).hasToken()) {
-    //   header['Authorization'] =
-    //       'Bearer ${await read(secureStorageProvider).getAccessToken()}';
-    // }
 
     dio.options.headers.addAll(header);
   }

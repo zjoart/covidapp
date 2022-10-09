@@ -1,3 +1,4 @@
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:covidapp/src/providers/general.dart';
 import 'package:covidapp/src/styles/theme.dart';
@@ -34,7 +35,7 @@ class MyApp extends ConsumerWidget {
               title: ' CovidApp ',
               onGenerateRoute: onGenerateRoute,
               debugShowCheckedModeBanner: false,
-              home: LaunchScreen(),
+              home: const LaunchScreen(),
             ));
   }
 }
