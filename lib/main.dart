@@ -1,4 +1,3 @@
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:covidapp/src/providers/general.dart';
 import 'package:covidapp/src/styles/theme.dart';
@@ -12,7 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
-  runApp(MyApp(savedThemeMode: savedThemeMode));
+  runApp(ProviderScope(child: MyApp(savedThemeMode: savedThemeMode)));
 }
 
 class MyApp extends ConsumerWidget {

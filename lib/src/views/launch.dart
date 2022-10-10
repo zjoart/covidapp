@@ -1,29 +1,18 @@
 import 'dart:async';
-import './homescreen.dart';
+import 'package:covidapp/src/providers/general.dart';
+import 'package:covidapp/src/utils/router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:flutter/material.dart';
 
-class LaunchScreen extends StatefulWidget {
-  const LaunchScreen({super.key});
-
+class LaunchScreen extends ConsumerWidget {
+  const LaunchScreen({Key? key}) : super(key: key);
   @override
-  _LaunchScreenState createState() => _LaunchScreenState();
-}
-
-class _LaunchScreenState extends State<LaunchScreen> {
-  @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final _nav = ref.read(navService);
     Timer(const Duration(seconds: 5), () {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const LandingPage(),
-      ));
+      _nav.navigateTo(Routes.home);
     });
-  }
-
-  // added test yourself
-  // and made the text to align at center
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue[900],
       body: Center(

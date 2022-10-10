@@ -1,12 +1,18 @@
 import 'package:covidapp/src/styles/app_colors.dart';
 import 'package:covidapp/src/utils/constvalues.dart';
+import 'package:covidapp/src/views/home/home.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-abstract class Routes {}
+abstract class Routes {
+  static const home = '/home';
+}
 
 Route<dynamic> onGenerateRoute(RouteSettings settings) {
   switch (settings.name) {
+    case Routes.home:
+      return MaterialPageRoute<dynamic>(
+          builder: (context) => const HomeView(), settings: settings);
     default:
       return MaterialPageRoute<dynamic>(
           builder: (context) => pageInDevelopment(settings.name!, context),

@@ -10,9 +10,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class HomeViewModel extends StateNotifier<HomeState> {
   late NavigationService _navigationService;
   late CovidHttpService _service;
-  HomeViewModel(Reader read) : super(HomeState.initial()) {
-    _navigationService = read(navService);
-    _service = read(covidHttpServiceProvider);
+  HomeViewModel(Ref ref) : super(HomeState.initial()) {
+    _navigationService = ref.read(navService);
+    _service = ref.read(covidHttpServiceProvider);
     getALLData();
   }
 
@@ -47,4 +47,4 @@ class HomeViewModel extends StateNotifier<HomeState> {
 }
 
 final homeViewModelProvider = StateNotifierProvider<HomeViewModel, HomeState>(
-    (ref) => HomeViewModel(ref.read));
+    (ref) => HomeViewModel(ref));
